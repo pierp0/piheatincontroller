@@ -2,16 +2,17 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
+#define BRATE 115200
+#define DEBUG false
 #define DHTPIN 2
 #define DHTTYPE DHT11
-#define BRATE 115200
+#define IPSRV "192.168.1.100"
 #define NET "test"
 #define NETPASS "foo"
-#define IPSRV "192.168.1.100"
-#define PORT "12345"
 #define PAGE "postHT"
+#define PORT "12345"
 #define ROOM 4
-#define DEBUG false
+#define SLEEPT 3e8
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -72,4 +73,5 @@ void loop() {
     }
   }
   http.end();
+  ESP.deepSleep(SLEEPT);
 }

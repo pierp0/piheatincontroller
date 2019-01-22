@@ -1,60 +1,66 @@
-import datetime
-import urlparse
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from functools import partial
+from SocketServer import ThreadingMixIn
+from srvpages import pages
+# import threading
+
+ADDR = 'localhost'
+PORT = 12345
+
+
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    """Handle requests in a separate thread."""
 
 
 class pyserv(BaseHTTPRequestHandler):
+
+    def __init__(self, pages, *args):
+        self._pages = pages
+        BaseHTTPRequestHandler.__init__(self, *args)
+
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self._avgtemp = 0.00
-        self._avghumidity = 0.00
-
-    def do_GET(self):
-        self._set_headers()
-        f = open("index.html", "r")
-        self.wfile.write(f.read())
 
     def do_HEAD(self):
         self._set_headers()
 
+    def do_GET(self):
+        try:
+            if self.path in ('/index.html', '/index.htm', '/index', '/', ''):
+                self._set_headers()
+                self.wfile.write(self._pages.showIndex())
+                #self.wfile.write('hello world')
+                return
+            elif self.path == '/getStatus':
+                self._set_headers()
+                return
+            else:
+                self.send_error(404)
+                self.end_headers()
+        except Exception as e:
+            raise e
+
     def do_POST(self):
-        self._set_headers()
-        self.send_response(200)
-        self.end_headers()
-        dump(self)
-        return
-
-
-def run(server_class=HTTPServer, handler_class=pyserv, port=12345):
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    print 'Starting httpd...'
-    httpd.serve_forever()
-
-
-def dump(self):
-    data = {'room': '', 'time': '', 'temp': '', 'humidity': ''}
-    for key, value in dict(urlparse.parse_qs(self.rfile.read(int(self.headers['Content-Length'])))).items():
-        if key == 't':
-            data['temp'] = value[0]
-            print value[0]
-        elif key == 'h':
-            data['humidity'] = value[0]
-        elif key == 'r':
-            data['room'] = value[0]
-        else:
-            print value[0]
-    data['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open("temperature.txt", "a+") as outfile:
-        outfile.write(str(data) + '\n')
+        try:
+            if self.path == '/postStatus':
+                self._set_headers()
+                return
+            if self.path == '/postHT':
+                self._set_headers()
+                return
+            self.send_error(404)
+            self.end_headers()
+        except Exception as e:
+            raise e
 
 
 if __name__ == "__main__":
-    from sys import argv
-
-if len(argv) == 2:
-    run(port=int(argv[1]))
-else:
-    run()
+    server_address = (ADDR, PORT)
+    p = pages()
+    handler = partial(pyserv, p)
+    httpd = ThreadedHTTPServer(server_address, handler)
+    print 'Starting httpd...'
+    print 'Starting server, use <Ctrl-C> to stop'
+    httpd.serve_forever()

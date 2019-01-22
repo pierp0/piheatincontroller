@@ -2,16 +2,17 @@
 #include <ESP8266HTTPClient.h>
 
 #define BRATE 115200
+#define DEBUG false
+#define IPSRV "192.168.1.100"
 #define NET "test"
 #define NETPASS "foo"
-#define IPSRV "192.168.1.100"
-#define PORT "12345"
 #define PAGEGET "getStatus"
 #define PAGEPOST "postStatus"
-#define RELAY 0
-#define DEBUG false
+#define PORT "12345"
+#define RELAY 0     //NC relay Normally closed
+#define SLEEPT 3e8
 
-bool status = false;
+bool status = true;
 
 void setup() {
   if (DEBUG){
@@ -40,14 +41,14 @@ void loop() {
   delay(30000);
   postStatus();
   updateStatus(getStatus());
-  ESP.deepSleep(20e6);
+  ESP.deepSleep(SLEEPT);
 }
 
 void updateStatus(bool s){
   if (s)
-    digitalWrite(RELAY, LOW);
+    digitalWrite(RELAY, LOW); // True close
   else
-    digitalWrite(RELAY, HIGH);
+    digitalWrite(RELAY, HIGH);// False Open
   status = s;
 }
 
