@@ -40,6 +40,7 @@ void loop() {
   delay(30000);
   postStatus();
   updateStatus(getStatus());
+  ESP.deepSleep(20e6);
 }
 
 void updateStatus(bool s){
