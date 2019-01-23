@@ -31,7 +31,7 @@ class pyserv(BaseHTTPRequestHandler):
             if self.path in ('/index.html', '/index.htm', '/index', '/', ''):
                 self._set_headers()
                 self.wfile.write(self._pages.showIndex())
-                #self.wfile.write('hello world')
+                # self.wfile.write('hello world')
                 return
             elif self.path == '/getStatus':
                 self._set_headers()
