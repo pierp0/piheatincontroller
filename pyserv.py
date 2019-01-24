@@ -2,7 +2,8 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from functools import partial
 from SocketServer import ThreadingMixIn
 from srvpages import pages
-# import threading
+import urlparse
+
 
 ADDR = 'localhost'
 PORT = 12345
@@ -32,28 +33,30 @@ class pyserv(BaseHTTPRequestHandler):
                 self._set_headers()
                 self.wfile.write(self._pages.showIndex())
                 # self.wfile.write('hello world')
-                return
             elif self.path == '/getStatus':
                 self._set_headers()
-                return
-            else:
-                self.send_error(404)
-                self.end_headers()
-        except Exception as e:
-            raise e
+                self.wfile.write(self._pages.getStatus())
+            if self.path.endswith(".css"):
+                with open("./WWW/css/style.css") as f:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/css')
+                    self.end_headers()
+                    self.wfile.write(f.read())
+        except IOError:
+            self.send_error(404)
+            self.end_headers()
 
     def do_POST(self):
         try:
             if self.path == '/postStatus':
                 self._set_headers()
-                return
-            if self.path == '/postHT':
+            elif self.path == '/postHT':
+                data = dict(urlparse.parse_qs(self.rfile.read(int(self.headers['Content-Length'])))).items()
+                self._pages.dump(data)
                 self._set_headers()
-                return
+        except IOError:
             self.send_error(404)
             self.end_headers()
-        except Exception as e:
-            raise e
 
 
 if __name__ == "__main__":
