@@ -31,4 +31,4 @@ class pages():
             else:
                 print value[0]
         data['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.HC.setDataFromSensor()
+        self.HC.setDataFromSensor(data)
