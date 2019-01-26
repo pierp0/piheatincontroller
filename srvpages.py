@@ -3,6 +3,7 @@ import datetime
 
 
 class pages():
+
     def __init__(self):
         self.HC = heatController()
 
@@ -10,7 +11,9 @@ class pages():
         try:
             with open('./WWW/index.html', 'r') as index:
                 page = index.read()
-                return page.replace('TEMPERATURE', str(self.HC.getT()))
+                page = page.replace('TEMPERATURE', str(self.HC.getT()))
+                page = page.replace('HUMIDITY', str(self.HC.getH()))
+                # page.replace('', str(self.HC.getT()))
             return str(page)
         except Exception as e:
             raise e
@@ -18,12 +21,11 @@ class pages():
     def getStatus(self):
         return self.HC.nextStatus()
 
-    def dump(self, data):
+    def dump(self, newdata):
         data = {'room': '', 'time': '', 'temp': '', 'humidity': ''}
-        for key, value in data:
+        for key, value in newdata:
             if key == 't':
                 data['temp'] = value[0]
-                print value[0]
             elif key == 'h':
                 data['humidity'] = value[0]
             elif key == 'r':
