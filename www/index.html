@@ -1,5 +1,20 @@
+<!DOCTYPE html>
+<html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+function updatetemp(){
+    $.ajax({url: "getTemp", success: function(response){
+      $("#temperature").html(response);
+    }});
+}
+updatetemp(); // This will run on page load
+setInterval(function(){
+    updatetemp() // this will run after every 5 seconds
+}, 5000);
+
+</script>
 </head>
 <div class="wrapper">
  <nav role='navigation'>
@@ -12,7 +27,7 @@
   </nav>
   <section>
     <div class="temperature entypo-light-up">
-      <h2>TEMPERATURE<span class="degree-symbol">°</span>C</h2>
+      <h2 id="temperature"></h2><h2><span class="degree-symbol">°</span>C</h2>
     </div>
     <ul>
       <li class="fontawesome-leaf left">
@@ -27,7 +42,7 @@
     </ul> 
 
   </section>
-  
 </div>
 
 <div class="result"></div>
+</html>

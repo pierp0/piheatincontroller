@@ -53,12 +53,12 @@ class heatController():
         if self.nextStep() and self.arUatHome():
             self.relay.setNextStatus(True)
 
-    def arUatHome():
+    def arUatHome(self):
         hosts = ['', '']
         if all(os.system("ping -c 1 " + host) for host in hosts):
             return False
 
-    def nextStep():
+    def nextStep(self):
         pass
 
 

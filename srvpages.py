@@ -21,6 +21,9 @@ class pages():
     def getStatus(self):
         return self.HC.nextStatus()
 
+    def getTemp(self):
+        return self.HC.getT()
+
     def dump(self, newdata):
         data = {'room': '', 'time': '', 'temp': '', 'humidity': ''}
         for key, value in newdata:

@@ -37,6 +37,9 @@ class pyserv(BaseHTTPRequestHandler):
             elif self.path == '/getStatus':
                 self._set_headers()
                 self.wfile.write(self._pages.getStatus())
+            elif self.path == '/getTemp':
+                self._set_headers()
+                self.wfile.write(self._pages.getTemp())
             if self.path.endswith(".css"):
                 with open("./WWW/css/style.css") as f:
                     self.send_response(200)
