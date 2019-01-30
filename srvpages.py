@@ -12,7 +12,7 @@ class pages():
             with open('./WWW/index.html', 'r') as index:
                 page = index.read()
                 page = page.replace('TEMPERATURE', str(self.HC.getT()))
-                page = page.replace('HUMIDITY', str(self.HC.getH()))
+                page = page.replace('HUMIDITY', str(self.HC.getH()) + '%')
                 # page.replace('', str(self.HC.getT()))
             return str(page)
         except Exception as e:

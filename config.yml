@@ -1,0 +1,35 @@
+rooms:
+  1 : 'bedroom_1'
+  2 : 'bedroom_2'
+  3 : 'living_room'
+  4 : 'kitchen'
+
+schedule:
+  winter      : [21,11,20,3]
+    status    : 'on'
+    week      : [1,5]
+      block_1 : [19,6,8]
+      block_2 : [19,14,23]
+      block_3 : [16,23,6]
+      default : 14
+    week-end  : 
+      block_1 : [19,6,23]
+      block_2 : []
+      block_3 : [16,23,6]
+      default : 14
+  spring   : 
+    status    : 'on'
+    week      : [1,5]
+      block_1 : [18,6,8]
+      block_2 : [17,14,23]
+      block_3 : [16,23,6]
+      default : 14
+    week-end  : 
+      block_1 : [19,6,23]
+      block_2 : []
+      block_3 : [16,23,6]
+      default : 14
+  summer  :
+    status    : 'off'
+  autumn :    
+    status    : 'off'

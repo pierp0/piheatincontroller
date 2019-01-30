@@ -27,8 +27,9 @@ class pyserv(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self._set_headers()
 
-    def do_GET(self):
+    def do_GET(self): # da modificare con un dizionario con chiave il path e valore la funzione di self._pages.
         try:
+            print self.path
             if self.path in ('/index.html', '/index.htm', '/index', '/', ''):
                 self._set_headers()
                 self.wfile.write(self._pages.showIndex())
