@@ -4,14 +4,24 @@
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-function updatetemp(){
+function updateTemp(){
     $.ajax({url: "getTemp", success: function(response){
       $("#temperature").html(response);
     }});
 }
-updatetemp(); // This will run on page load
+
+function updateHumidity(){
+    $.ajax({url: "getHum", success: function(response){
+      $("#humidity").html(response);
+    }});
+}
+
+
+updateTemp(); // This will run on page load
+updateHumidity();
 setInterval(function(){
-    updatetemp() // this will run after every 5 seconds
+    updateTemp() // this will run after every 5 seconds
+    updateHumidity()
 }, 5000);
 
 </script>
@@ -26,15 +36,15 @@ setInterval(function(){
     </ul>
   </nav>
   <section>
-    <div class="temperature entypo-light-up">
+    <div class="temperature  fontawesome-fire">
       <h2 id="temperature"></h2><h2><span class="degree-symbol">°</span>C</h2>
     </div>
     <ul>
       <li class="fontawesome-leaf left">
         <span>4 mph</span>
       </li>
-      <li class="fontawesome-tint center">
-        <span>HUMIDITY</span>
+      <li class="entypo-water center">
+        <span id="humidity"></span><span>%</span>
       </li>
       <li class="fontawesome-umbrella right">
         <span>10%</span>

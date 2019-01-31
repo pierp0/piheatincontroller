@@ -27,19 +27,20 @@ class pyserv(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self._set_headers()
 
-    def do_GET(self): # da modificare con un dizionario con chiave il path e valore la funzione di self._pages.
+    def do_GET(self):
+        pagesMap = {'/index.html': self._pages.showIndex(),
+                    '/index.htm': self._pages.showIndex(),
+                    '/index': self._pages.showIndex(),
+                    '/': self._pages.showIndex(),
+                    '': self._pages.showIndex(),
+                    '/getStatus': self._pages.getStatus(),
+                    '/getTemp': self._pages.getTemp(),
+                    '/getHum': self._pages.getHum()
+                    }
         try:
-            print self.path
-            if self.path in ('/index.html', '/index.htm', '/index', '/', ''):
+            if self.path in pagesMap:
                 self._set_headers()
-                self.wfile.write(self._pages.showIndex())
-                # self.wfile.write('hello world')
-            elif self.path == '/getStatus':
-                self._set_headers()
-                self.wfile.write(self._pages.getStatus())
-            elif self.path == '/getTemp':
-                self._set_headers()
-                self.wfile.write(self._pages.getTemp())
+                self.wfile.write(pagesMap[self.path])
             if self.path.endswith(".css"):
                 with open("./WWW/css/style.css") as f:
                     self.send_response(200)
@@ -55,7 +56,8 @@ class pyserv(BaseHTTPRequestHandler):
             if self.path == '/postStatus':
                 self._set_headers()
             elif self.path == '/postHT':
-                data = dict(urlparse.parse_qs(self.rfile.read(int(self.headers['Content-Length'])))).items()
+                data = dict(urlparse.parse_qs(self.rfile.read(
+                    int(self.headers['Content-Length'])))).items()
                 self._pages.dump(data)
                 self._set_headers()
         except IOError:

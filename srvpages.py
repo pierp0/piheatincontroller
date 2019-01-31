@@ -10,11 +10,7 @@ class pages():
     def showIndex(self):
         try:
             with open('./WWW/index.html', 'r') as index:
-                page = index.read()
-                page = page.replace('TEMPERATURE', str(self.HC.getT()))
-                page = page.replace('HUMIDITY', str(self.HC.getH()) + '%')
-                # page.replace('', str(self.HC.getT()))
-            return str(page)
+                return str(index.read())
         except Exception as e:
             raise e
 
@@ -23,6 +19,9 @@ class pages():
 
     def getTemp(self):
         return self.HC.getT()
+
+    def getHum(self):
+        return self.HC.getH()
 
     def dump(self, newdata):
         data = {'room': '', 'time': '', 'temp': '', 'humidity': ''}
