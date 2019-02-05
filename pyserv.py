@@ -2,10 +2,11 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from functools import partial
 from SocketServer import ThreadingMixIn
 from srvpages import pages
-import urlparse
+import cgi
+from urllib.parse import urlparse, parse_qs
 
 
-ADDR = '192.168.1.100'
+ADDR = '127.0.0.1'
 PORT = 12345
 
 
@@ -44,34 +45,39 @@ class pyserv(BaseHTTPRequestHandler):
             elif self.path.endswith('.css'):
                 self._set_headers('text/css')
                 self.wfile.write(self._pages.getCss())
+            else:
+                self.send_error(404)
+                self.end_headers()
         except IOError:
-            self.send_error(404)
+            self.send_error(500)
             self.end_headers()
-        #else:
-        #    print 'Error, request not parsed :\n' + str(self.path)
 
     def do_POST(self):
         try:
-            print self.path
-            print 'qui'
             if self.path == '/postStatus':
-                #da finire
-                self._set_headers()
-            elif self.path == '/':
-                print 'hhhhhhhhhh'
-                print self.path
-                print self.headers
-                print self.headers['Content-Type']
-                print self.rfile
+                status = self.parsePost()
+                print status
                 self._set_headers()
             elif self.path == '/postHT':
                 data = dict(urlparse.parse_qs(self.rfile.read(
                     int(self.headers['Content-Length'])))).items()
+                print data
                 self._pages.dump(data)
                 self._set_headers()
+            elif self.path == '/':
+                status = self.parsePost()
+                print status
+                self._set_headers()
+            else:
+                self.send_error(404)
+                self.end_headers()
         except IOError:
-            self.send_error(404)
+            self.send_error(500)
             self.end_headers()
+
+    def parsePost(self):
+        ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+        return cgi.parse_multipart(self.rfile, pdict)
 
 
 if __name__ == "__main__":
