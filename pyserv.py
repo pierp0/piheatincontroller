@@ -5,7 +5,7 @@ from srvpages import pages
 import urlparse
 
 
-ADDR = 'localhost'
+ADDR = '192.168.1.100'
 PORT = 12345
 
 
@@ -19,41 +19,50 @@ class pyserv(BaseHTTPRequestHandler):
         self._pages = pages
         BaseHTTPRequestHandler.__init__(self, *args)
 
-    def _set_headers(self):
+    def _set_headers(self, ct='text/html'):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', ct)
         self.end_headers()
 
     def do_HEAD(self):
         self._set_headers()
 
     def do_GET(self):
-        pagesMap = {'/index.html': self._pages.showIndex(),
-                    '/index.htm': self._pages.showIndex(),
-                    '/index': self._pages.showIndex(),
-                    '/': self._pages.showIndex(),
-                    '': self._pages.showIndex(),
-                    '/getStatus': self._pages.getStatus(),
-                    '/getTemp': self._pages.getTemp(),
-                    '/getHum': self._pages.getHum()
-                    }
+        getPagesMap = {'/index.html': self._pages.showIndex(),
+                       '/index.htm': self._pages.showIndex(),
+                       '/index': self._pages.showIndex(),
+                       '/': self._pages.showIndex(),
+                       '': self._pages.showIndex(),
+                       '/getStatus': self._pages.getStatus(),
+                       '/getTemp': self._pages.getTemp(),
+                       '/getHum': self._pages.getHum(),
+                       }
         try:
-            if self.path in pagesMap:
+            if self.path in getPagesMap:
                 self._set_headers()
-                self.wfile.write(pagesMap[self.path])
-            if self.path.endswith(".css"):
-                with open("./WWW/css/style.css") as f:
-                    self.send_response(200)
-                    self.send_header('Content-type', 'text/css')
-                    self.end_headers()
-                    self.wfile.write(f.read())
+                self.wfile.write(getPagesMap[self.path])
+            elif self.path.endswith('.css'):
+                self._set_headers('text/css')
+                self.wfile.write(self._pages.getCss())
         except IOError:
             self.send_error(404)
             self.end_headers()
+        #else:
+        #    print 'Error, request not parsed :\n' + str(self.path)
 
     def do_POST(self):
         try:
+            print self.path
+            print 'qui'
             if self.path == '/postStatus':
+                #da finire
+                self._set_headers()
+            elif self.path == '/':
+                print 'hhhhhhhhhh'
+                print self.path
+                print self.headers
+                print self.headers['Content-Type']
+                print self.rfile
                 self._set_headers()
             elif self.path == '/postHT':
                 data = dict(urlparse.parse_qs(self.rfile.read(

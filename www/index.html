@@ -15,25 +15,23 @@ function updateHumidity(){
       $("#humidity").html(response);
     }});
 }
-
-
 updateTemp(); // This will run on page load
 updateHumidity();
 setInterval(function(){
     updateTemp() // this will run after every 5 seconds
     updateHumidity()
-}, 5000);
+}, 10000);
 
 </script>
 </head>
 <div class="wrapper">
  <nav role='navigation'>
-    <ul>
+   <!-- <ul>
       <li><a href="#" class="fontawesome-th-large"></a></li>
       <li><a href="#" class="fontawesome-file-alt"></a></li>
       <li><a href="#" class="fontawesome-calendar"></a></li>
       <li class="last"><a href="#" class="fontawesome-cog"></a></li>
-    </ul>
+    </ul>-->
   </nav>
   <section>
     <div class="temperature  fontawesome-fire">

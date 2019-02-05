@@ -18,7 +18,6 @@ class heatController():
         return self.avgH
 
     def setDataFromSensor(self, data):
-        print '\nprima di if'
         if data['room'] not in self.rooms:
             self.rooms[data['room']] = room(
                 data['room'], data['temp'], data['humidity'])
@@ -40,12 +39,11 @@ class heatController():
     def updateTH(self):
         t = 0
         h = 0
-        print 'dentro updateTH'
         for room in self.rooms:
+            print self.rooms[room].getT()
             t = t + float(self.rooms[room].getT())
+            print self.rooms[room].getH()
             h = h + float(self.rooms[room].getH())
-        print t
-        print h
         self.avgT = int(float(t) / len(self.rooms) - self.roomsDown)
         self.avgH = int(float(h) / len(self.rooms) - self.roomsDown)
 

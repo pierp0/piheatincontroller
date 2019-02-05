@@ -10,7 +10,14 @@ class pages():
     def showIndex(self):
         try:
             with open('./WWW/index.html', 'r') as index:
-                return str(index.read())
+                return index.read()
+        except Exception as e:
+            raise e
+
+    def getCss(self):
+        try:
+            with open("./WWW/css/style.css") as f:
+                return f.read()
         except Exception as e:
             raise e
 

@@ -1,3 +1,10 @@
+forecast:
+  site           : ''
+  api            : ''
+  city_name      : ''
+  country_code   : ''
+
+
 rooms:
   1 : 'bedroom_1'
   2 : 'bedroom_2'
