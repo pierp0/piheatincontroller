@@ -6,9 +6,9 @@
 #define DEBUG false
 #define DHTPIN 2
 #define DHTTYPE DHT11
-#define IPSRV "192.168.1.100"
+#define IPSRV "127.0.0.1"
 #define NET "RIGEL2.4"
-#define NETPASS "PIPPOpsg1mp5"
+#define NETPASS "SPAM"
 #define PAGE "postHT"
 #define PORT "12345"
 #define ROOM 2
@@ -45,10 +45,8 @@ void setup() {
 }
 
 void loop() {
-  delay(10000);
+  delay(30000);
   HTTPClient http;
-  /*http.begin("http://192.168.1.100:12345/postHT");*/
-  /*http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGE));*/
   dht.read(DHTPIN);
   tmp = dht.readTemperature();
   hty = dht.readHumidity();
@@ -57,9 +55,8 @@ void loop() {
       Serial.println("Failed to read from DHT sensor!");
     }
     else{
-       http.begin("http://192.168.1.100:12345");
-       http.addHeader("Content-Type", "text/plain");
-       /*http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGE));*/
+      http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGE));
+      http.addHeader("Content-Type", "text/plain");
       http.POST("ERR=Errorroom" + String(ROOM));
     }  
     return;
@@ -71,7 +68,6 @@ void loop() {
       Serial.print(hty);     
     }
     else{
-      /*http.begin("http://192.168.1.100:12345/postHT");*/
       http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGE));
       http.addHeader("Content-Type", "text/plain");
       http.POST("r=" + String(ROOM) + "&t=" + String(tmp) + "&h=" + String(hty));
