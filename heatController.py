@@ -40,9 +40,7 @@ class heatController():
         t = 0
         h = 0
         for room in self.rooms:
-            print self.rooms[room].getT()
             t = t + float(self.rooms[room].getT())
-            print self.rooms[room].getH()
             h = h + float(self.rooms[room].getH())
         self.avgT = int(float(t) / len(self.rooms) - self.roomsDown)
         self.avgH = int(float(h) / len(self.rooms) - self.roomsDown)

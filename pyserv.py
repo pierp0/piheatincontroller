@@ -2,8 +2,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from functools import partial
 from SocketServer import ThreadingMixIn
 from srvpages import pages
-import cgi
-from urllib.parse import urlparse, parse_qs
+import urlparse
 
 
 ADDR = '127.0.0.1'
@@ -29,19 +28,24 @@ class pyserv(BaseHTTPRequestHandler):
         self._set_headers()
 
     def do_GET(self):
-        getPagesMap = {'/index.html': self._pages.showIndex(),
-                       '/index.htm': self._pages.showIndex(),
-                       '/index': self._pages.showIndex(),
-                       '/': self._pages.showIndex(),
-                       '': self._pages.showIndex(),
-                       '/getStatus': self._pages.getStatus(),
-                       '/getTemp': self._pages.getTemp(),
-                       '/getHum': self._pages.getHum(),
+        getPagesMap = {'/index.html': self._pages.showIndex,
+                       '/index.htm': self._pages.showIndex,
+                       '/index': self._pages.showIndex,
+                       '/': self._pages.showIndex,
+                       '': self._pages.showIndex,
+                       '/getStatus': self._pages.getStatus,
+                       '/getNextStatus': self._pages.getNextStatus,
+                       '/getTemp': self._pages.getTemp,
+                       '/getHum': self._pages.getHum,
+                       '/roomsDatails': self._pages.getRommsPage,
+                       '/updateConsumption': self._pages.getConsumption,
+                       '/updateForecast': self._pages.getForecast,
+                       '/getOperationMode': self._pages.getOperationMode
                        }
         try:
             if self.path in getPagesMap:
                 self._set_headers()
-                self.wfile.write(getPagesMap[self.path])
+                self.wfile.write(getPagesMap[self.path]())
             elif self.path.endswith('.css'):
                 self._set_headers('text/css')
                 self.wfile.write(self._pages.getCss())
@@ -55,18 +59,22 @@ class pyserv(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             if self.path == '/postStatus':
-                status = self.parsePost()
-                print status
+                self._pages.setRelayStatus(self.parsePost())
                 self._set_headers()
             elif self.path == '/postHT':
-                data = dict(urlparse.parse_qs(self.rfile.read(
-                    int(self.headers['Content-Length'])))).items()
-                print data
-                self._pages.dump(data)
+                self._pages.setHT(self.parsePost())
+                self._set_headers()
+            elif self.path == '/auto':
+                self._pages.setAuto()
+                self._set_headers()
+            elif self.path == '/alwayson':
+                self._pages.setAlwayson()
+                self._set_headers()
+            elif self.path == '/alwaysoff':
+                self._pages.setAlwaysoff()
                 self._set_headers()
             elif self.path == '/':
-                status = self.parsePost()
-                print status
+                self._pages.setError(self.parsePost())
                 self._set_headers()
             else:
                 self.send_error(404)
@@ -76,8 +84,7 @@ class pyserv(BaseHTTPRequestHandler):
             self.end_headers()
 
     def parsePost(self):
-        ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
-        return cgi.parse_multipart(self.rfile, pdict)
+        return urlparse.parse_qs(self.rfile.read(int(self.headers['Content-Length']))).items()
 
 
 if __name__ == "__main__":

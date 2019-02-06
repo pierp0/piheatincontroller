@@ -22,6 +22,9 @@ class pages():
             raise e
 
     def getStatus(self):
+        return self.HC.relay.getStatus()
+
+    def getNextStatus(self):
         return self.HC.nextStatus()
 
     def getTemp(self):
@@ -30,7 +33,24 @@ class pages():
     def getHum(self):
         return self.HC.getH()
 
-    def dump(self, newdata):
+    def getRommsPage(self):
+        pass
+
+    def getConsumption(self):
+        pass
+
+    def getForecast(self):
+        pass
+
+    def getOperationMode(self):
+        pass
+
+    def setRelayStatus(self, newdata):
+        for key, value in newdata:
+            if key == 's':
+                self.HC.relay.setStatus(value[0])
+
+    def setHT(self, newdata):
         data = {'room': '', 'time': '', 'temp': '', 'humidity': ''}
         for key, value in newdata:
             if key == 't':
@@ -43,3 +63,12 @@ class pages():
                 print value[0]
         data['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.HC.setDataFromSensor(data)
+
+    def setAuto():
+        pass 
+
+    def setAlwaysOn():
+        pass
+
+    def setAlwaysOff():
+        pass
