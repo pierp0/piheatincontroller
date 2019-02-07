@@ -3,10 +3,7 @@ from functools import partial
 from SocketServer import ThreadingMixIn
 from srvpages import pages
 import urlparse
-
-
-ADDR = '127.0.0.1'
-PORT = 12345
+import yaml
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
@@ -57,24 +54,17 @@ class pyserv(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
+        postPagesMap = {'/postStatus': self._pages.setRelayStatus,
+                        '/postHT': self._pages.setHT,
+                        '/auto': self._pages.setAuto,
+                        '/alwayson': self._pages.setAlwaysOn,
+                        '/alwaysoff': self._pages.setAlwaysOff,
+                        '/keepTemperature': self._pages.setKT,
+                        '/': self._pages.setError
+                        }
         try:
-            if self.path == '/postStatus':
-                self._pages.setRelayStatus(self.parsePost())
-                self._set_headers()
-            elif self.path == '/postHT':
-                self._pages.setHT(self.parsePost())
-                self._set_headers()
-            elif self.path == '/auto':
-                self._pages.setAuto()
-                self._set_headers()
-            elif self.path == '/alwayson':
-                self._pages.setAlwayson()
-                self._set_headers()
-            elif self.path == '/alwaysoff':
-                self._pages.setAlwaysoff()
-                self._set_headers()
-            elif self.path == '/':
-                self._pages.setError(self.parsePost())
+            if self.path in postPagesMap:
+                postPagesMap[self.path](self.parsePost())
                 self._set_headers()
             else:
                 self.send_error(404)
@@ -88,10 +78,42 @@ class pyserv(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    server_address = (ADDR, PORT)
+    with open('./config.yml', 'r') as confFile:
+        conf = yaml.load(confFile)
+    server_address = (conf['server']['ip'], int(conf['server']['port']))
     p = pages()
     handler = partial(pyserv, p)
     httpd = ThreadedHTTPServer(server_address, handler)
     print 'Starting httpd...'
     print 'Starting server, use <Ctrl-C> to stop'
     httpd.serve_forever()
+
+
+'''
+            if self.path == '/postStatus':
+                self._pages.setRelayStatus(self.parsePost())
+                self._set_headers()
+
+            elif self.path == '/postHT':
+                self._pages.setHT(self.parsePost())
+                self._set_headers()
+
+            elif self.path == '/auto':
+                self._pages.setAuto()
+                self._set_headers()
+
+            elif self.path == '/alwayson':
+                self._pages.setAlwayson()
+                self._set_headers()
+
+            elif self.path == '/alwaysoff':
+                self._pages.setAlwaysoff()
+                self._set_headers()
+
+            elif self.path == '/keepTemperature':
+                self._pages.setKT()
+                self._set_headers()
+            elif self.path == '/':
+                self._pages.setError(self.parsePost())
+                self._set_headers()
+'''

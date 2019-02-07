@@ -10,6 +10,7 @@ class heatController():
         self.rooms = {}
         self.relay = relay()
         self.roomsDown = 0
+        operationMode
 
     def getT(self, room=0):
         return self.avgT
