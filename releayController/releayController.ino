@@ -2,11 +2,11 @@
 #include <ESP8266HTTPClient.h>
 
 #define BRATE 115200
-#define DEBUG false
-#define IPSRV "192.168.1.100"
-#define NET "test"
-#define NETPASS "foo"
-#define PAGEGET "getStatus"
+#define DEBUG true
+#define IPSRV "127.0.0.1"
+#define NET "RIGEL2.4"
+#define NETPASS "PIPPOpsg1mp5"
+#define PAGEGET "getNextStatus"
 #define PAGEPOST "postStatus"
 #define PORT "12345"
 #define RELAY 0     //NC relay Normally closed
@@ -34,14 +34,15 @@ void setup() {
     Serial.println(WiFi.localIP());
   }  
   pinMode(RELAY,OUTPUT);
-  updateStatus(true);
+  updateStatus(status);
 }
 
 void loop() {
-  delay(30000);
+  delay(10000);
   postStatus();
+  Serial.println(status);
   updateStatus(getStatus());
-  ESP.deepSleep(SLEEPT);
+  //ESP.deepSleep(SLEEPT);
 }
 
 void updateStatus(bool s){
@@ -55,6 +56,7 @@ void updateStatus(bool s){
 void postStatus() {
   HTTPClient http;
   http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGEPOST));
+  Serial.println("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGEPOST));
   http.addHeader("Content-Type", "text/plain");
   http.POST("s=" + String(status));
   http.end();
@@ -66,6 +68,7 @@ bool getStatus() {
   http.addHeader("Content-Type", "text/plain");
   http.GET();
   bool s = http.getString();
+  Serial.println(status);
   http.end();
   return s;
 }

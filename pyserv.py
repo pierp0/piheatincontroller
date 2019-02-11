@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from functools import partial
 from SocketServer import ThreadingMixIn
@@ -43,6 +45,7 @@ class pyserv(BaseHTTPRequestHandler):
                        '/getOperationMode': self._pages.getOperationMode
                        }
         try:
+            print self.path
             if self.path in getPagesMap:
                 self._set_headers()
                 self.wfile.write(getPagesMap[self.path]())
@@ -58,6 +61,7 @@ class pyserv(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
+            print self.path
             if self.path == '/postStatus':
                 self._pages.setRelayStatus(self.parsePost())
                 self._set_headers()

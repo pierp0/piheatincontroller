@@ -48,6 +48,7 @@ class pages():
     def setRelayStatus(self, newdata):
         for key, value in newdata:
             if key == 's':
+                print value[0]
                 self.HC.relay.setStatus(value[0])
 
     def setHT(self, newdata):
