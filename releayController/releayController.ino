@@ -1,74 +1,96 @@
+/**************************************************************************************************/
+/**Client ESP8266 to manage relay controller. Post actual status and get next status             **/
+/**           Version 0.9 - https://github.com/pierp0/piheatincontroller                         **/
+/**                      Written By Pierpaolo Furiani (2019)                                     **/
+/**************************************************************************************************/
+
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
-#define BRATE 115200
-#define DEBUG true
-#define IPSRV "127.0.0.1"
-#define NET "RIGEL2.4"
-#define NETPASS "PIPPOpsg1mp5"
-#define PAGEGET "getNextStatus"
-#define PAGEPOST "postStatus"
-#define PORT "12345"
-#define RELAY 0     //NC relay Normally closed
-#define SLEEPT 3e8
+#define RELAY 0     // NC relay Normally closed
+#define SLEEPT 3e8  // Time in ms used for deep sleep. 5 minuts it's default
+
+const bool  DEBUG = true;         // If it's true it will print on serial port
+const char* IPSRV = "127.0.0.1";  // Replace with the ip address of the server.
+const char* PORT  = "12345";      // Replace with server port
+const char* SSID  = "EGGS";       // Replace with yor network SSID
+const char* PWD   = "SPAM";       // Replace with your net pasword
+const char* GETPAGE   = "getNextStatus"; // Used to get the next relay status
+const char* POSTPAGE  = "postStatus";    // Used to post actual relay status
 
 bool status = true;
 
 void setup() {
   if (DEBUG){
-     Serial.begin(BRATE);
-     Serial.print("\n\t-----DEBUG----");  
-  } 
-  WiFi.begin(NET, NETPASS);
-  if(DEBUG){
-    Serial.print("\tWiFi module started...");
-  }  
-  while (WiFi.status() != WL_CONNECTED){
-    if(DEBUG){
-      Serial.print("...\n");
-    }
-    delay(500);
+    delay(5000);
+    Serial.begin(115200);
+    Serial.print("\n\t-----DEBUG----");  
   }
-  if(DEBUG){
-    Serial.print("Connected, IP address: ");
-    Serial.println(WiFi.localIP());
-  }  
+
+  // WiFi initialization
+  WiFi.begin(SSID, PWD);
+  if(DEBUG)
+    Serial.print("\tWiFi module started...");
+  
+  // Trying to connect...
+  while (WiFi.status() != WL_CONNECTED){
+    if(DEBUG)
+      Serial.print("...\n");
+    delay(3000);
+  }
+  
+  // Connectd!
+  if(DEBUG)
+    Serial.println("Connected, IP address: " + WiFi.localIP());
+  
+  // Set pin RELAY for output
   pinMode(RELAY,OUTPUT);
+  if(DEBUG)
+    Serial.println("Output pin is ready");
+  
+  // Set actual operation status 
   updateStatus(status);
+  if(DEBUG)
+    Serial.println("Status updated");
 }
 
 void loop() {
-  delay(10000);
+  // Send a message to server with actual status
   postStatus();
-  Serial.println(status);
+  if(DEBUG)
+    Serial.println();
+  // Get from server the new nex status
   updateStatus(getStatus());
-  //ESP.deepSleep(SLEEPT);
+
+  // Deep sleep for SLEEPT time. For deep sleep function hardware modify is needed, please refer to documentation.
+  ESP.deepSleep(SLEEPT);
 }
 
 void updateStatus(bool s){
+  // Warning: relay is Normally Closed
   if (s)
-    digitalWrite(RELAY, LOW); // True close
+    digitalWrite(RELAY, LOW); // True --> Close
   else
-    digitalWrite(RELAY, HIGH);// False Open
+    digitalWrite(RELAY, HIGH);// False --> Open
   status = s;
+  return;
 }
 
 void postStatus() {
   HTTPClient http;
-  http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGEPOST));
-  Serial.println("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGEPOST));
+  http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(POSTPAGE));
   http.addHeader("Content-Type", "text/plain");
   http.POST("s=" + String(status));
   http.end();
+  return;
 }
 
 bool getStatus() {
   HTTPClient http;
-  http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(PAGEGET));
+  http.begin("http://" + String(IPSRV) + ":" + String(PORT) + "/" + String(GETPAGE));
   http.addHeader("Content-Type", "text/plain");
   http.GET();
   bool s = http.getString();
-  Serial.println(status);
   http.end();
   return s;
 }

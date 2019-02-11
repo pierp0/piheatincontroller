@@ -1,5 +1,4 @@
 from collections import deque
-import os
 
 
 class heatController():
@@ -10,6 +9,7 @@ class heatController():
         self.rooms = {}
         self.relay = relay()
         self.roomsDown = 0
+        #self.operationMode
 
     def getT(self, room=0):
         return self.avgT

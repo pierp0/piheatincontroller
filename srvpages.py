@@ -65,11 +65,20 @@ class pages():
         data['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.HC.setDataFromSensor(data)
 
-    def setAuto():
-        pass 
-
-    def setAlwaysOn():
+    def setAuto(self, *args):
         pass
 
-    def setAlwaysOff():
+    def setAlwaysOn(self, *args):
         pass
+
+    def setAlwaysOff(self, *args):
+        pass
+
+    def setKT(self, *args):
+        pass
+
+    def setError(self):
+        pass
+
+    def sayHello(self, mac):
+        print mac
