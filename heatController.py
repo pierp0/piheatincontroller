@@ -1,4 +1,5 @@
 from collections import deque
+import yaml
 
 
 class heatController():
@@ -10,12 +11,17 @@ class heatController():
         self.relay = relay()
         self.roomsDown = 0
         #self.operationMode
+        with open('./config.yml', 'r') as confFile:
+            conf = yaml.load(confFile)
 
     def getT(self, room=0):
         return self.avgT
 
     def getH(self, room=0):
         return self.avgH
+
+    def addSensor(self, mac):
+        if mac
 
     def setDataFromSensor(self, data):
         if data['room'] not in self.rooms:
@@ -63,8 +69,9 @@ class heatController():
 
 class room():
 
-    def __init__(self, r=0, t=0, h=0):
-        self.r = r
+    def __init__(self, mac=0, t=0, h=0, label=''):
+        self.mac = mac
+        self.label = label 
         self.t = t
         self.h = h
         self.old = deque('', 5)

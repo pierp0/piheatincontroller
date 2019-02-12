@@ -80,5 +80,5 @@ class pages():
     def setError(self):
         pass
 
-    def sayHello(self, mac):
-        print mac
+    def postHello(self, mac):
+        self.HC.addSensor(mac)
