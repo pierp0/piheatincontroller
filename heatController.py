@@ -1,81 +1,115 @@
 from collections import deque
-import yaml
 
 
 class heatController():
 
-    def __init__(self):
-        self.avgT = 0
-        self.avgH = 0
+    def __init__(self, roomslist, ktmode, automode):
+        self.avgT, self.avgH = (0.00, 0.00)
         self.rooms = {}
+        for r in roomslist:
+            print r
+            self.rooms[r] = room(roomslist[r], 3 * len(roomslist))
         self.relay = relay()
-        self.roomsDown = 0
-        #self.operationMode
-        with open('./config.yml', 'r') as confFile:
-            conf = yaml.load(confFile)
-
-    def getT(self, room=0):
-        return self.avgT
-
-    def getH(self, room=0):
-        return self.avgH
+        self.kt = ktmode
+        self.auto = automode
+        # 0 = alwaysOff 1 = alwaysOn, 2 = auto, 3 = keepTemp
+        self.operationmode = 0
+        self.relayNextStep = False
 
     def addSensor(self, mac):
-        if mac
+        if not self.rooms[mac].isActive():
+            self.rooms[mac].setActive(True)
 
     def setDataFromSensor(self, data):
-        if data['room'] not in self.rooms:
-            self.rooms[data['room']] = room(
-                data['room'], data['temp'], data['humidity'])
-        else:
-            if self.rooms[data['room']].keepAlive < 1:
-                self.roomsDown -= 1
-            self.rooms[data['room']].updateRoom(data)
-        self.updateRoomAlive(data['room'])
+        self.rooms[data['room']].updateRoom(data)
+        self.decreaseRoomAlive(data['room'])
         self.updateTH()
-        self.nextStatus()
+        self.updateStatus()
 
-    def updateRoomAlive(self, updatedroom):
+    def decreaseRoomAlive(self, updatedroom):
         for room in self.rooms:
-            if room != updatedroom:
+            if room != updatedroom and self.rooms[room] is not None:
                 self.rooms[room].decreaseKA
-                if self.rooms[room].keepAlive == 0:
-                    self.roomsDown += 1
 
     def updateTH(self):
-        t = 0
-        h = 0
+        t, h, c = 0
         for room in self.rooms:
-            t = t + float(self.rooms[room].getT())
-            h = h + float(self.rooms[room].getH())
-        self.avgT = int(float(t) / len(self.rooms) - self.roomsDown)
-        self.avgH = int(float(h) / len(self.rooms) - self.roomsDown)
+            if self.rooms[room].isActive():
+                t = t + float(self.rooms[room].getT())
+                h = h + float(self.rooms[room].getH())
+                c += 1
+        self.avgT = int(float(t) / c)
+        self.avgH = int(float(h) / c)
 
-    def nextStatus(self):
+    def getT(self, room=None):
+        return self.avgT
+
+    def getH(self, room=None):
+        return self.avgH
+
+    def getOperationMode(self):
+        return self.operationmode
+
+    def setOperationMode(self, opm):
+        self.operationmode = opm
+
+    def updateStatus(self):
+        # AlwaysOn
+        if self.operationmode == 1:
+            self.relayNextStep = self.allwaysOn()
+        # Auto
+        elif self.operationmode == 2:
+            self.relayNextStep = self.auto()
+        # keepTemp
+        elif self.operationmode == 3:
+            self.relayNextStep = self.keepTemp()
+        # AlwaysOff
+        else:
+            self.relayNextStep = self.allwaysOff()
+        '''
         if self.nextStep() and self.arUatHome():
             self.relay.setNextStatus(True)
-
+        else:
+            self.relay.setNextStatus(False)
     def arUatHome(self):
         return True
-        '''
+
         hosts = ['', '']
         if all(os.system("ping -c 1 " + host) for host in hosts):
             return False
         '''
 
     def nextStep(self):
+        return self.relayNextStep()
+
+    def allwaysOff():
+        return False
+
+    def allwaysOn():
         return True
+
+    def auto():
+        pass
+
+    def keepTemp(self):
+        if self.getT() <= (float(self.kt) + 0.50):
+            return True
+        else:
+            return False
 
 
 class room():
 
-    def __init__(self, mac=0, t=0, h=0, label=''):
-        self.mac = mac
-        self.label = label 
-        self.t = t
-        self.h = h
+    def __init__(self, ka, label=''):
+        self.label = label
+        self.active = False
+        self.t, self.h = (0.00, 0.00)
         self.old = deque('', 5)
-        self.keepAlive = 5
+        self.ka = ka
+        self.keepAlive = ka
+
+    def isActive(self):
+        return self.active
 
     def getT(self):
         if self.keepAlive > 0:
@@ -93,10 +127,19 @@ class room():
         self.old.appendleft([self.t, self.h])
         self.t = data['temp']
         self.h = data['humidity']
-        self.keepAlive = 5
+        self.keepAlive = self.ka
+        self.setActive(True)
 
     def decreaseKA(self):
-        self.keepAlive -= 1
+        if not self.isActive():
+            self.keepAlive = 0
+        else:
+            self.keepAlive -= 1
+            if self.keepAlive < 1:
+                self.setActive(False)
+
+    def setActive(self, a):
+        self.active = a
 
 
 class relay():
@@ -104,7 +147,6 @@ class relay():
     def __init__(self):
         # status : [True:UP, False:DOWN, None: not connected]
         self.status = None  # Not connected
-        self.nextStatus = None
         self.keepAlive = 10
 
     def getStatus(self):
@@ -112,6 +154,3 @@ class relay():
 
     def setStatus(self, status):
         self.status = status
-
-    def setNextStatus(self, nstatus):
-        self.nextStatus = nstatus

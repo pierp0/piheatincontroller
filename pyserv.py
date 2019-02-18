@@ -35,7 +35,7 @@ class pyserv(BaseHTTPRequestHandler):
                        '/': self._pages.showIndex,
                        '': self._pages.showIndex,
                        '/getStatus': self._pages.getStatus,
-                       '/getNextStatus': self._pages.getNextStatus,
+                       '/getNextStatus': self._pages.getNextStep,
                        '/getTemp': self._pages.getTemp,
                        '/getHum': self._pages.getHum,
                        '/roomsDatails': self._pages.getRommsPage,
@@ -44,7 +44,8 @@ class pyserv(BaseHTTPRequestHandler):
                        '/getOperationMode': self._pages.getOperationMode
                        }
         try:
-            print self.path
+            if(DEBUG):
+                print self.path
             if self.path in getPagesMap:
                 self._set_headers()
                 self.wfile.write(getPagesMap[self.path]())
@@ -69,6 +70,8 @@ class pyserv(BaseHTTPRequestHandler):
                         '/': self._pages.setError
                         }
         try:
+            if(DEBUG):
+                print self.path
             if self.path in postPagesMap:
                 postPagesMap[self.path](self.parsePost())
                 self._set_headers()

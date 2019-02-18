@@ -9,7 +9,13 @@ forecast:
   country_code   : ''
 
 rooms:
-  1 : 'bedroom_1'
-  2 : 'bedroom_2'
-  3 : 'living_room'
-  4 : 'kitchen'
+  mac1 : 'bedroom_1'
+  mac2 : 'bedroom_2'
+  mac3 : 'living_room'
+  mac4 : 'kitchen'
+
+mode:
+  kt  :  18
+  scheduler: 
+
+    default: 18

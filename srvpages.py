@@ -1,11 +1,15 @@
 from heatController import heatController
 import datetime
+import yaml
 
 
 class pages():
 
     def __init__(self):
-        self.HC = heatController()
+        with open('./config.yml', 'r') as confFile:
+            conf = yaml.load(confFile)
+        self.HC = heatController(
+            conf['rooms'], conf['mode']['kt'], conf['mode']['scheduler'])
 
     def showIndex(self):
         try:
@@ -24,8 +28,8 @@ class pages():
     def getStatus(self):
         return self.HC.relay.getStatus()
 
-    def getNextStatus(self):
-        return self.HC.nextStatus()
+    def getNextStep(self):
+        return self.HC.nextStep()
 
     def getTemp(self):
         return self.HC.getT()
@@ -43,7 +47,7 @@ class pages():
         pass
 
     def getOperationMode(self):
-        pass
+        return self.HC.getOperationMode()
 
     def setRelayStatus(self, newdata):
         for key, value in newdata:
@@ -66,16 +70,16 @@ class pages():
         self.HC.setDataFromSensor(data)
 
     def setAuto(self, *args):
-        pass
+        self.HC.setOperationMode(2)
 
     def setAlwaysOn(self, *args):
-        pass
+        self.HC.setOperationMode(1)
 
     def setAlwaysOff(self, *args):
-        pass
+        self.HC.setOperationMode(0)
 
     def setKT(self, *args):
-        pass
+        self.HC.setOperationMode(3)
 
     def setError(self):
         pass
