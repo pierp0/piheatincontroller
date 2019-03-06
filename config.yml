@@ -14,8 +14,81 @@ rooms:
   mac3 : 'living_room'
   mac4 : 'kitchen'
 
-mode:
-  kt  :  18
-  scheduler: 
+exclusion_list: 
+  set0  : "empty"
+  set1  : 
+    - mac1
+    - mac2
+  set2  :
+    - empty
 
-    default: 18
+mode:
+  kt  :
+    temperature :  18
+    tollerance  : 1
+  auto:  
+    default :
+      ht  :
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:
+        set1 :
+          - 22
+    monday    :
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  "set0"
+    tuesday   : 
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  set0
+    wednesday : 
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  set0
+    thursday  :
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  set0
+    friday    :
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  set0
+    saturday  :
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  set0
+    sunday    :
+      active  : false 
+      ht:
+        "7:00"    :   18
+        "8:30"    :   15
+        "14:00"   :   18
+        "22:00"   :   16
+      elist:  set0

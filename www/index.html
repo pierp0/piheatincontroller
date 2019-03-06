@@ -18,27 +18,48 @@ function updateHumidity(){
 updateTemp(); // This will run on page load
 updateHumidity();
 setInterval(function(){
-    updateTemp() // this will run after every 5 seconds
+    updateTemp() // this will run after every 50 seconds
     updateHumidity()
-}, 10000);
+}, 50000);
 
 </script>
 </head>
 <div class="wrapper">
  <nav role='navigation'>
-   <!-- <ul>
-      <li><a href="#" class="fontawesome-th-large"></a></li>
+   <ul>
+    <li>
+      <form action="/mode" method="post">
+        <a href="javascript:;" onclick="parentNode.submit();">on</a>
+        <input type="hidden" name="ON" value=1>
+      </form>
+    </li>
+    <li>
+      <form action="/mode" method="post">
+        <a href="javascript:;" onclick="parentNode.submit();">off</a>
+        <input type="hidden" name="OFF" value=0>
+      </form>
+    </li>
+    <li>
+      <form action="/mode" method="post">
+        <a href="javascript:;" onclick="parentNode.submit();">auto</a>
+        <input type="hidden" name="AUTO" value=2>
+      </form>
+    </li>
+    <li class="last"><a href="#" class="fontawesome-cog"></a></li>
+      <!--
+      <li><form><a href="mode" class="fontawesome-th-large"></a></form></li>
       <li><a href="#" class="fontawesome-file-alt"></a></li>
       <li><a href="#" class="fontawesome-calendar"></a></li>
       <li class="last"><a href="#" class="fontawesome-cog"></a></li>
-    </ul>-->
+      -->
+    </ul>
   </nav>
   <section>
     <div class="temperature  fontawesome-fire">
       <h2 id="temperature"></h2><h2><span class="degree-symbol">°</span>C</h2>
     </div>
     <ul>
-      <li class="fontawesome-leaf left">
+     <li class="fontawesome-leaf left">
         <span>4 mph</span>
       </li>
       <li class="entypo-water center">
@@ -48,7 +69,6 @@ setInterval(function(){
         <span>10%</span>
       </li>
     </ul> 
-
   </section>
 </div>
 

@@ -1,4 +1,5 @@
 from collections import deque
+import datetime
 
 
 class heatController():
@@ -10,10 +11,11 @@ class heatController():
             print r
             self.rooms[r] = room(roomslist[r], 3 * len(roomslist))
         self.relay = relay()
-        self.kt = ktmode
-        self.auto = automode
+        self.kttemperature = ktmode['temperature']
+        self.kttollerance = ktmode['tollerance']
+        self.automode = automode
         # 0 = alwaysOff 1 = alwaysOn, 2 = auto, 3 = keepTemp
-        self.operationmode = 0
+        self.operationmode = 2
         self.relayNextStep = False
 
     def addSensor(self, mac):
@@ -32,20 +34,25 @@ class heatController():
                 self.rooms[room].decreaseKA
 
     def updateTH(self):
-        t, h, c = 0
-        for room in self.rooms:
+        self.avgT, self.avgH = self.calculateTH()
+
+    def calculateTH(self, rooms=None):
+        t, h = (0.0, 0.0)
+        c = 0
+        if rooms is None:
+            rooms = self.rooms
+        for room in rooms:
             if self.rooms[room].isActive():
-                t = t + float(self.rooms[room].getT())
-                h = h + float(self.rooms[room].getH())
+                t = t + float(rooms[room].getT())
+                h = h + float(rooms[room].getH())
                 c += 1
-        self.avgT = int(float(t) / c)
-        self.avgH = int(float(h) / c)
+        return (int(float(t) / c), int(float(h) / c))
 
     def getT(self, room=None):
-        return self.avgT
+        return int(self.avgT)
 
     def getH(self, room=None):
-        return self.avgH
+        return int(self.avgH)
 
     def getOperationMode(self):
         return self.operationmode
@@ -80,19 +87,52 @@ class heatController():
         '''
 
     def nextStep(self):
-        return self.relayNextStep()
+        return self.relayNextStep
 
-    def allwaysOff():
+    def allwaysOff(self):
         return False
 
-    def allwaysOn():
+    def allwaysOn(self):
         return True
 
-    def auto():
-        pass
+    def auto(self):
+        weekday = {
+            0: 'monday',
+            1: 'tuesday',
+            2: 'wednesday',
+            3: 'thursday',
+            4: 'friday',
+            5: 'saturday',
+            6: 'sunday'
+        }
+        now = datetime.datetime.now()
+        # looking for today
+        day = weekday[now.weekday()]
+        useconf = ''
+        rooms = {}
+        tSet = ''
+        # if today is active I'll use today, otherwise default
+        try:
+            if self.automode[day]["active"]:
+                useconf = day
+            else:
+                useconf = 'default'
+        except Exception as e:
+            raise e
+        # I select the temperature to maintain now
+        for t in self.automode[useconf]['ht']:
+            # se ora attuale < orario allora assegno temp
+            if datetime.datetime.strptime(str(t), "%H:%M") > datetime.datetime.strptime(str(now.hour) + ":" + str(now.minute), "%H:%M"):
+                tSet = float(self.automode[useconf]['ht'][t])
+        rooms = 'assegno stanze'
+        t, h = self.calculateTH(rooms)
+        if tSet <= t + self.kttollerance:
+            return True
+        else:
+            return False
 
     def keepTemp(self):
-        if self.getT() <= (float(self.kt) + 0.50):
+        if self.getT() <= (float(self.kt) + self.kttollerance):
             return True
         else:
             return False

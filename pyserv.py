@@ -62,19 +62,16 @@ class pyserv(BaseHTTPRequestHandler):
     def do_POST(self):
         postPagesMap = {'/postStatus': self._pages.setRelayStatus,
                         '/postHT': self._pages.setHT,
-                        '/auto': self._pages.setAuto,
-                        '/alwayson': self._pages.setAlwaysOn,
-                        '/alwaysoff': self._pages.setAlwaysOff,
-                        '/keepTemperature': self._pages.setKT,
-                        '/postHello': self._pages.sayHello,
+                        '/mode': self._pages.setMode,
+                        '/postHello': self._pages.postHello,
                         '/': self._pages.setError
                         }
         try:
             if(DEBUG):
                 print self.path
             if self.path in postPagesMap:
-                postPagesMap[self.path](self.parsePost())
                 self._set_headers()
+                self.wfile.write(postPagesMap[self.path](self.parsePost()))
             else:
                 self.send_error(404)
                 self.end_headers()
@@ -84,6 +81,8 @@ class pyserv(BaseHTTPRequestHandler):
 
     def parsePost(self):
         return urlparse.parse_qs(self.rfile.read(int(self.headers['Content-Length']))).items()
+
+# Add configuration mode... load sensors one by one and record macaddress
 
 
 if __name__ == "__main__":
