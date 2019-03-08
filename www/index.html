@@ -15,7 +15,7 @@ function updateHumidity(){
     }});
 }
 function updateConsume(){
-    $.ajax({url: "getConsume", success: function(response){
+    $.ajax({url: "getCons", success: function(response){
       $("#consume").html(response);
     }});
 }
