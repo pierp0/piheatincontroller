@@ -87,7 +87,23 @@ class heatController():
         '''
 
     def nextStep(self):
+        self.chkToday()
+        if self.relay.getStatus():
+            self.CalculateConsumption()
+        self.relay.setTime()
         return self.relayNextStep
+
+    def CalculateConsumption(self):
+        
+        self.relay.addConsumption()
+
+
+    def chkToday(self):
+        today = datetime.datetime.today().date()
+        if today != self.relay.getDay():
+            self.relay.resetDay()
+            self.relay.resetConsumption()
+            self.relay.restTime()
 
     def allwaysOff(self):
         return False
@@ -188,9 +204,35 @@ class relay():
         # status : [True:UP, False:DOWN, None: not connected]
         self.status = None  # Not connected
         self.keepAlive = 10
+        self.consumption = 0.00
+        self.lastTimestamp = ''
+        self.day = ''
 
     def getStatus(self):
         return self.status
 
+    def getTime(self):
+        return self.lastTimestamp
+
+    def getDay(self):
+        return self.day
+
     def setStatus(self, status):
         self.status = status
+
+    def addConsumption(self, c):
+        self.consumption += c
+
+    def resetConsumption(self)
+        self.consumption = 0.00
+
+    def resetDay(self):
+        self.day = datetime.datetime.today().date()
+
+    def resetTime(self):
+        today = datetime.datetime.today().date()
+        hourzero = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
+        self.lastTimestamp = datetime.datetime.combine(today, hourzero) 
+
+    def setTime(self):
+        self.lastTimestamp = datetime.datetime.now()

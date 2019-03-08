@@ -9,17 +9,23 @@ function updateTemp(){
       $("#temperature").html(response);
     }});
 }
-
 function updateHumidity(){
     $.ajax({url: "getHum", success: function(response){
       $("#humidity").html(response);
     }});
 }
+function updateConsume(){
+    $.ajax({url: "getConsume", success: function(response){
+      $("#consume").html(response);
+    }});
+}
+updateConsume();
 updateTemp(); // This will run on page load
 updateHumidity();
 setInterval(function(){
     updateTemp() // this will run after every 5 seconds
     updateHumidity()
+    updateConsume()
 }, 5000);
 
 </script>
@@ -59,8 +65,8 @@ setInterval(function(){
       <h2 id="temperature"></h2><h2><span class="degree-symbol">°</span>C</h2>
     </div>
     <ul>
-     <li class="fontawesome-leaf left">
-        <span>4 mph</span>
+     <li class="entypo-chart-line left">
+        <span id="consume"><span>h/d</span>
       </li>
       <li class="entypo-water center">
         <span id="humidity"></span><span>%</span>

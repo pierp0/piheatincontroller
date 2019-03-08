@@ -38,6 +38,7 @@ class pyserv(BaseHTTPRequestHandler):
                        '/getNextStatus': self._pages.getNextStep,
                        '/getTemp': self._pages.getTemp,
                        '/getHum': self._pages.getHum,
+                       '/getConsume': self._pages.getConsume,
                        '/roomsDatails': self._pages.getRommsPage,
                        '/updateConsumption': self._pages.getConsumption,
                        '/updateForecast': self._pages.getForecast,

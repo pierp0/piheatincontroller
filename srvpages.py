@@ -36,6 +36,9 @@ class pages():
 
     def getHum(self):
         return self.HC.getH()
+    
+    def getConsume(self):
+        return self.HC.getC()
 
     def getRommsPage(self):
         pass
