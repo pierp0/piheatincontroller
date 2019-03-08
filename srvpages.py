@@ -79,4 +79,4 @@ class pages():
         pass
 
     def postHello(self, mac):
-        self.HC.addSensor(mac)
+        self.HC.addSensor(str(mac[0][1][0]))

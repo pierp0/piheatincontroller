@@ -8,14 +8,13 @@ class heatController():
         self.avgT, self.avgH = (0.00, 0.00)
         self.rooms = {}
         for r in roomslist:
-            print r
             self.rooms[r] = room(roomslist[r], 3 * len(roomslist))
         self.relay = relay()
         self.kttemperature = ktmode['temperature']
         self.kttollerance = ktmode['tollerance']
         self.automode = automode
         # 0 = alwaysOff 1 = alwaysOn, 2 = auto, 3 = keepTemp
-        self.operationmode = 2
+        self.operationmode = 0
         self.relayNextStep = False
 
     def addSensor(self, mac):
@@ -58,6 +57,7 @@ class heatController():
         return self.operationmode
 
     def setOperationMode(self, opm):
+        print "OPERATION MODE : " + str(opm)
         self.operationmode = opm
 
     def updateStatus(self):

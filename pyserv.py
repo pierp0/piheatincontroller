@@ -7,7 +7,7 @@ from srvpages import pages
 import urlparse
 import yaml
 
-DEBUG = True
+DEBUG = False
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):

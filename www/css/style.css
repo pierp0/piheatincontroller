@@ -82,7 +82,7 @@ nav ul li a:hover {
 section {
   height: 100%;
   box-sizing: border-box;
-  padding: 10px 40px;
+  padding: 10px 20px;
   float: left;
   position: relative;
   background-color: #1F222A;
@@ -116,7 +116,7 @@ section h1 a.add:hover {
 section .temperature {
   padding: 30px 0px;
   color: #3D414C;
-  font-size: 5em;
+  font-size: 4.7em;
   transition: color 0.5s ease;
 }
 section .temperature:hover {
