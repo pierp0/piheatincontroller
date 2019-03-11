@@ -15,7 +15,7 @@ function updateHumidity(){
     }});
 }
 function updateConsume(){
-    $.ajax({url: "getCons", success: function(response){
+    $.ajax({url: "getConsumption", success: function(response){
       $("#consume").html(response);
     }});
 }
@@ -66,7 +66,7 @@ setInterval(function(){
     </div>
     <ul>
      <li class="entypo-chart-line left">
-        <span id="consume"><span>h/d</span>
+        <span id="consume"></span><span>h/d</span>
       </li>
       <li class="entypo-water center">
         <span id="humidity"></span><span>%</span>

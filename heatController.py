@@ -56,6 +56,9 @@ class heatController():
     def getOperationMode(self):
         return self.operationmode
 
+    def getConsumption(self):
+        return self.relay.getConsumption()
+
     def setOperationMode(self, opm):
         print "OPERATION MODE : " + str(opm)
         self.operationmode = opm
@@ -87,23 +90,22 @@ class heatController():
         '''
 
     def nextStep(self):
-        self.chkToday()
+        now = datetime.datetime.today()
+        self.chkToday(now)
         if self.relay.getStatus():
-            self.CalculateConsumption()
-        self.relay.setTime()
+            self.CalculateConsumption(now)
+        self.relay.setTime(now)
         return self.relayNextStep
 
-    def CalculateConsumption(self):
-        
-        self.relay.addConsumption()
+    def CalculateConsumption(self, now):
+        delta = now - self.relay.getTime()
+        self.relay.addConsumption(delta.total_seconds())
 
-
-    def chkToday(self):
-        today = datetime.datetime.today().date()
-        if today != self.relay.getDay():
+    def chkToday(self, now):
+        if now.date() != self.relay.getDay():
             self.relay.resetDay()
             self.relay.resetConsumption()
-            self.relay.restTime()
+            self.relay.resetTime()
 
     def allwaysOff(self):
         return False
@@ -208,6 +210,8 @@ class relay():
         self.lastTimestamp = ''
         self.day = ''
 
+        self.today = 
+
     def getStatus(self):
         return self.status
 
@@ -217,13 +221,16 @@ class relay():
     def getDay(self):
         return self.day
 
+    def getConsumption(self):
+        return self.consumption
+
     def setStatus(self, status):
         self.status = status
 
     def addConsumption(self, c):
         self.consumption += c
 
-    def resetConsumption(self)
+    def resetConsumption(self):
         self.consumption = 0.00
 
     def resetDay(self):
@@ -232,7 +239,7 @@ class relay():
     def resetTime(self):
         today = datetime.datetime.today().date()
         hourzero = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
-        self.lastTimestamp = datetime.datetime.combine(today, hourzero) 
+        self.lastTimestamp = datetime.datetime.combine(today, hourzero)
 
-    def setTime(self):
-        self.lastTimestamp = datetime.datetime.now()
+    def setTime(self, now):
+        self.lastTimestamp = now

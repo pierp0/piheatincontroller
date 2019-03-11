@@ -36,14 +36,12 @@ class pages():
 
     def getHum(self):
         return self.HC.getH()
-    
-    def getConsume(self):
-        return self.HC.getC()
-
-    def getRommsPage(self):
-        pass
 
     def getConsumption(self):
+        print self.HC.getConsumption()
+        return round((self.HC.getConsumption() / 3600), 1)
+
+    def getRommsPage(self):
         pass
 
     def getForecast(self):

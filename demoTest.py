@@ -14,23 +14,30 @@ def runRelay(ip, port, status, sleep):
     s = status
     while True:
         time.sleep(sleep)
-        requests.post("http://" + str(ip) + ":" + str(port) + "/postStatus", data={"s": s})
-        s = requests.get("http://" + str(ip) + ":" + str(port) + "/getNextStatus").content
+        requests.post("http://" + str(ip) + ":" +
+                      str(port) + "/postStatus", data={"s": s})
+        s = requests.get("http://" + str(ip) + ":" +
+                         str(port) + "/getNextStatus").content
         if int(s == 'True'):
-            print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + " -- Status from relay : Active"
+            print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
+                " -- Status from relay : Active"
         else:
-            print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + " -- Status from relay : Unactive"
+            print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
+                " -- Status from relay : Unactive"
 
 
 def runSensor(ip, port, mac, sleep):
     time.sleep(randint(1, 10))
-    requests.post("http://" + str(ip) + ":" + str(port) + "/postHello", data={"hello": mac})
+    requests.post("http://" + str(ip) + ":" + str(port) +
+                  "/postHello", data={"hello": mac})
     while True:
         time.sleep(sleep + randint(1, 10))
         t = randint(16, 30)
         h = randint(40, 60)
-        requests.post("http://" + str(ip) + ":" + str(port) + "/postHT", data={"r": mac, "t": t, "h": h})
-        print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + " -- MAC:" + str(mac) + " Temp: " + str(t) + " Hum: " + str(h)
+        requests.post("http://" + str(ip) + ":" + str(port) +
+                      "/postHT", data={"r": mac, "t": t, "h": h})
+        print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
+            " -- MAC:" + str(mac) + " Temp: " + str(t) + " Hum: " + str(h)
 
 
 if __name__ == "__main__":
