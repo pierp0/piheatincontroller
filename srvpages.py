@@ -2,6 +2,7 @@ from heatController import heatController
 import datetime
 import yaml
 
+DEBUG = True
 
 class pages():
 
@@ -38,7 +39,7 @@ class pages():
         return self.HC.getH()
 
     def getConsumption(self):
-        print "\nCONSUMO: " + str((self.HC.getConsumption() / 3600))
+        # print "\nCONSUMO: " + str((self.HC.getConsumption() / 3600))
         return round((self.HC.getConsumption() / 3600), 1)
 
     def getRommsPage(self):
@@ -53,6 +54,8 @@ class pages():
     def setRelayStatus(self, newdata):
         for key, value in newdata:
             if key == 's':
+                if DEBUG:
+                    print "\nvsetRelayStatus : " + str(value[0])
                 self.HC.relay.setStatus(value[0])
 
     def setHT(self, newdata):

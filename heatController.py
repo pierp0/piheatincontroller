@@ -1,6 +1,7 @@
 from collections import deque
 import datetime
 
+DEBUG = True
 
 class heatController():
 
@@ -54,6 +55,7 @@ class heatController():
         return int(self.avgH)
 
     def getOperationMode(self):
+        print "\nOperation mode : " + str(self.operationmode)
         return self.operationmode
 
     def getConsumption(self):
@@ -92,23 +94,19 @@ class heatController():
     def nextStep(self):
         now = datetime.datetime.now()
         self.chkToday(now)
-        if self.relay.getStatus() == True:
-            print "\ndentro ON"
+        print "\nGetstatus : " + str(self.relay.getStatus())
+        print type(self.relay.getStatus())
+        if self.relay.getStatus():
+            print "DENTRO IF GET STATUS TRUE"
             self.relay.addTodayOn(now)
         else:
             self.relay.addTodayOff(now)
         self.relay.setChkPoint(now)
         return self.relayNextStep
-    '''
-    def CalculateConsumption(self, now):
-        delta = now - self.relay.getTime()
-        self.relay.addConsumption(delta.total_seconds())
-    '''
+
     def chkToday(self, now):
         if now.date() != self.relay.getDtChkPoint().date():
             self.relay.resetDtChkPoint()
-            # self.relay.resetConsumption()
-            # self.relay.resetTime()
 
     def allwaysOff(self):
         return False
@@ -130,7 +128,7 @@ class heatController():
         # looking for today
         day = weekday[now.weekday()]
         useconf = ''
-        rooms = {}
+        # rooms = {}
         tSet = ''
         # if today is active I'll use today, otherwise default
         try:
@@ -145,8 +143,10 @@ class heatController():
             # se ora attuale < orario allora assegno temp
             if datetime.datetime.strptime(str(t), "%H:%M") > datetime.datetime.strptime(str(now.hour) + ":" + str(now.minute), "%H:%M"):
                 tSet = float(self.automode[useconf]['ht'][t])
-        rooms = 'assegno stanze'
-        t, h = self.calculateTH(rooms)
+        # rooms = 'assegno stanze'
+        t, h = self.calculateTH()  # (rooms)
+        print "\nTSET : " + str(tSet)
+        print "\nT : " + str(t + self.kttollerance)
         if tSet <= t + self.kttollerance:
             return True
         else:
@@ -207,12 +207,8 @@ class relay():
 
     def __init__(self):
         # status : [True:UP, False:DOWN, None: not connected]
-        self.status = None  # Not connected
+        self.status = False  # Not connected
         self.keepAlive = 10
-        self.consumption = 0.00
-        self.lastTimestamp = ''
-        self.day = ''
-
         self.dtChkPoint = datetime.datetime.now()
         self.todayOn = 0.00
         self.todayOff = 0.00
@@ -221,10 +217,7 @@ class relay():
 
     def getStatus(self):
         print "\nSTATUS : " + str(self.status)
-        return self.status
-
-    def getTime(self):
-        return self.lastTimestamp
+        return bool(self.status)
 
     def getDtChkPoint(self):
         return self.dtChkPoint
@@ -234,6 +227,7 @@ class relay():
 
     def setStatus(self, status):
         self.status = bool(status)
+        print "\n SetStatus : " + str(status)
 
     def addTodayOn(self, now):
         print "\nNow : " + str(now)
@@ -250,14 +244,6 @@ class relay():
         self.oldOff.appendleft(self.todayOff)
         self.todayOn = 0
         self.todayOff = 0
-    '''
-    def resetTime(self):
-        today = datetime.datetime.today().date()
-        hourzero = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
-        self.lastTimestamp = datetime.datetime.combine(today, hourzero)
-    '''
+
     def setChkPoint(self, now):
         self.dtChkPoint = now
-
-    # def setTime(self, now):
-    #    self.lastTimestamp = now

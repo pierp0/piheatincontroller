@@ -18,6 +18,7 @@ def runRelay(ip, port, status, sleep):
                       str(port) + "/postStatus", data={"s": s})
         s = requests.get("http://" + str(ip) + ":" +
                          str(port) + "/getNextStatus").content
+        print "\nS : " + str(s)
         if int(s == 'True'):
             print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
                 " -- Status from relay : Active"

@@ -14,14 +14,6 @@ rooms:
   mac3 : 'living_room'
   mac4 : 'kitchen'
 
-exclusion_list: 
-  set0  : "empty"
-  set1  : 
-    - mac1
-    - mac2
-  set2  :
-    - empty
-
 mode:
   kt  :
     temperature :  18
@@ -33,9 +25,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:
-        set1 :
-          - 22
     monday    :
       active  : false 
       ht:
@@ -43,7 +32,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  "set0"
     tuesday   : 
       active  : false 
       ht:
@@ -51,7 +39,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  set0
     wednesday : 
       active  : false 
       ht:
@@ -59,7 +46,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  set0
     thursday  :
       active  : false 
       ht:
@@ -67,7 +53,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  set0
     friday    :
       active  : false 
       ht:
@@ -75,7 +60,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  set0
     saturday  :
       active  : false 
       ht:
@@ -83,7 +67,6 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  set0
     sunday    :
       active  : false 
       ht:
@@ -91,4 +74,3 @@ mode:
         "8:30"    :   15
         "14:00"   :   18
         "22:00"   :   16
-      elist:  set0
