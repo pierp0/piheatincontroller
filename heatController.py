@@ -90,22 +90,25 @@ class heatController():
         '''
 
     def nextStep(self):
-        now = datetime.datetime.today()
+        now = datetime.datetime.now()
         self.chkToday(now)
-        if self.relay.getStatus():
-            self.CalculateConsumption(now)
-        self.relay.setTime(now)
+        if self.relay.getStatus() == True:
+            print "\ndentro ON"
+            self.relay.addTodayOn(now)
+        else:
+            self.relay.addTodayOff(now)
+        self.relay.setChkPoint(now)
         return self.relayNextStep
-
+    '''
     def CalculateConsumption(self, now):
         delta = now - self.relay.getTime()
         self.relay.addConsumption(delta.total_seconds())
-
+    '''
     def chkToday(self, now):
-        if now.date() != self.relay.getDay():
-            self.relay.resetDay()
-            self.relay.resetConsumption()
-            self.relay.resetTime()
+        if now.date() != self.relay.getDtChkPoint().date():
+            self.relay.resetDtChkPoint()
+            # self.relay.resetConsumption()
+            # self.relay.resetTime()
 
     def allwaysOff(self):
         return False
@@ -210,36 +213,51 @@ class relay():
         self.lastTimestamp = ''
         self.day = ''
 
-        self.today = 
+        self.dtChkPoint = datetime.datetime.now()
+        self.todayOn = 0.00
+        self.todayOff = 0.00
+        self.oldOn = deque('', 5)
+        self.oldOff = deque('', 5)
 
     def getStatus(self):
+        print "\nSTATUS : " + str(self.status)
         return self.status
 
     def getTime(self):
         return self.lastTimestamp
 
-    def getDay(self):
-        return self.day
+    def getDtChkPoint(self):
+        return self.dtChkPoint
 
     def getConsumption(self):
-        return self.consumption
+        return self.todayOn
 
     def setStatus(self, status):
-        self.status = status
+        self.status = bool(status)
 
-    def addConsumption(self, c):
-        self.consumption += c
+    def addTodayOn(self, now):
+        print "\nNow : " + str(now)
+        print "\nCHKPOINT : " + str(self.dtChkPoint)
+        print "\nAdd today : " + str((now - self.dtChkPoint).total_seconds())
+        self.todayOn += (now - self.dtChkPoint).total_seconds()
 
-    def resetConsumption(self):
-        self.consumption = 0.00
+    def addTodayOff(self, now):
+        self.todayOff += (now - self.dtChkPoint).total_seconds()
 
-    def resetDay(self):
-        self.day = datetime.datetime.today().date()
-
+    def resetDtChkPoint(self):
+        self.dtChkPoint = datetime.datetime.now()
+        self.oldOn.appendleft(self.todayOn)
+        self.oldOff.appendleft(self.todayOff)
+        self.todayOn = 0
+        self.todayOff = 0
+    '''
     def resetTime(self):
         today = datetime.datetime.today().date()
         hourzero = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
         self.lastTimestamp = datetime.datetime.combine(today, hourzero)
+    '''
+    def setChkPoint(self, now):
+        self.dtChkPoint = now
 
-    def setTime(self, now):
-        self.lastTimestamp = now
+    # def setTime(self, now):
+    #    self.lastTimestamp = now

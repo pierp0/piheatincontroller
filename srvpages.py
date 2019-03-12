@@ -38,7 +38,7 @@ class pages():
         return self.HC.getH()
 
     def getConsumption(self):
-        print self.HC.getConsumption()
+        print "\nCONSUMO: " + str((self.HC.getConsumption() / 3600))
         return round((self.HC.getConsumption() / 3600), 1)
 
     def getRommsPage(self):

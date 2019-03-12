@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print 'Starting httpd...'
     print 'Starting server, use <Ctrl-C> to stop'
     try:
-        thread.start_new_thread(runRelay, (ip, port, 0, 15))
+        thread.start_new_thread(runRelay, (ip, port, False, 15))
         thread.start_new_thread(runSensor, (ip, port, "mac1", 10))
         thread.start_new_thread(runSensor, (ip, port, "mac2", 10))
         thread.start_new_thread(runSensor, (ip, port, "mac3", 10))
