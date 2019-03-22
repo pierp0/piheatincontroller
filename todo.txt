@@ -1,0 +1,7 @@
+- Implement group of sensor end multi relay (eg. sensors and relay for a floor)
+- Exclusion group for sensors (some sensors will be excluded in a specific time)
+- Forecast
+- User interface
+- Configuration mode, used to regisry sensors before using 
+- Documentation
+
