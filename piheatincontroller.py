@@ -1,10 +1,16 @@
 import demoTest
 import termcolor
+import pyserv
 import sys
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        pass
+        print termcolor.colored("""
+        +----------------------------------------+
+        |           STARTING HTTP SRV            |
+        +----------------------------------------+
+        """, 'green')
+        pyserv.startHttpSrv()
     elif sys.argv[1] == '-h' or sys.argv[1] == '--h' or sys.argv[1] == 'help':
         print termcolor.colored("""
         +----------------------------------------+
@@ -13,9 +19,9 @@ if __name__ == "__main__":
         """, 'green')
         print """
         NAME
-                Manager.py
+                piheatincontroller.py
         SYNOPSIS
-                python Manager.py [-h|-d]
+                python piheatincontroller.py [-h | -t | -c]
         DESCRIPTION
             -h  to show this help
             -t  to execute in test mode
@@ -28,6 +34,7 @@ if __name__ == "__main__":
         |         CONFIGURATION MODE             |
         +----------------------------------------+
         """, 'green')
+        pyserv.startHttpSrv(bool(True))
     elif sys.argv[1] == '-t':
         print termcolor.colored("""
         +----------------------------------------+

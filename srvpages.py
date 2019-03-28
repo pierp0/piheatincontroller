@@ -4,13 +4,15 @@ import yaml
 
 DEBUG = True
 
+
 class pages():
 
-    def __init__(self):
+    def __init__(self, config=False):
         with open('./config.yml', 'r') as confFile:
             conf = yaml.load(confFile)
         self.HC = heatController(
             conf['rooms'], conf['mode']['kt'], conf['mode']['auto'])
+        self.config = bool(config)
 
     def showIndex(self):
         try:
@@ -83,4 +85,15 @@ class pages():
         pass
 
     def postHello(self, mac):
-        self.HC.addSensor(str(mac[0][1][0]))
+        macaddr = str(mac[0][1][0])
+        if self.config:
+            label = raw_input('Plaese add label for sensor ' + macaddr + '\n')
+            with open('./config.yml', 'r') as confFile:
+                conf = yaml.load(confFile)
+            conf['rooms'][macaddr] = label
+            with open('./config.yml', 'w') as confFile:
+                yaml.dump(conf, confFile, default_flow_style=False)
+            print 'Sensor has been recorded. Please turn off this sensor and turn on the next one.'
+            print 'If the process is completed press ^c to terminate'
+        else:
+            self.HC.addSensor(macaddr)
