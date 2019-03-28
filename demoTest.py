@@ -41,7 +41,7 @@ def runSensor(ip, port, mac, sleep):
             " -- MAC:" + str(mac) + " Temp: " + str(t) + " Hum: " + str(h)
 
 
-if __name__ == "__main__":
+def startDemo():
     with open('./config.yml', 'r') as confFile:
         conf = yaml.load(confFile)
     ip = conf['server']['ip']
@@ -50,13 +50,12 @@ if __name__ == "__main__":
     p = pages()
     handler = partial(pyserv.pyserv, p)
     httpd = pyserv.ThreadedHTTPServer(server_address, handler)
-    print 'Starting httpd...'
-    print 'Starting server, use <Ctrl-C> to stop'
+    print '\nStarting server, use <Ctrl-C> to stop'
     try:
         thread.start_new_thread(runRelay, (ip, port, False, 15))
         thread.start_new_thread(runSensor, (ip, port, "mac1", 10))
         thread.start_new_thread(runSensor, (ip, port, "mac2", 10))
         thread.start_new_thread(runSensor, (ip, port, "mac3", 10))
     except Exception as e:
-        print "Error: unable to start thread"
+        print "Error: unable to start thread" + str(e)
     httpd.serve_forever()
