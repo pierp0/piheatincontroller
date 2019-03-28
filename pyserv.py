@@ -7,7 +7,7 @@ from srvpages import pages
 import urlparse
 import yaml
 
-DEBUG = True
+DEBUG = False
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
@@ -83,16 +83,14 @@ class pyserv(BaseHTTPRequestHandler):
     def parsePost(self):
         return urlparse.parse_qs(self.rfile.read(int(self.headers['Content-Length']))).items()
 
-# Add configuration mode... load sensors one by one and record macaddress
 
-
-if __name__ == "__main__":
+def startHttpSrv(config=None):
+    # if __name__ == "__main__":
     with open('./config.yml', 'r') as confFile:
         conf = yaml.load(confFile)
     server_address = (conf['server']['ip'], int(conf['server']['port']))
-    p = pages()
+    p = pages(config)
     handler = partial(pyserv, p)
     httpd = ThreadedHTTPServer(server_address, handler)
-    print 'Starting httpd...'
-    print 'Starting server, use <Ctrl-C> to stop'
+    print 'Starting server, use <Ctrl-C> to stop\n'
     httpd.serve_forever()

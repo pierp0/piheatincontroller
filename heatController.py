@@ -1,7 +1,7 @@
 from collections import deque
 import datetime
 
-DEBUG = True
+DEBUG = False
 
 class heatController():
 
@@ -55,14 +55,16 @@ class heatController():
         return int(self.avgH)
 
     def getOperationMode(self):
-        print "\nOperation mode : " + str(self.operationmode)
+        if DEBUG:
+            print "\nOperation mode : " + str(self.operationmode)
         return self.operationmode
 
     def getConsumption(self):
         return self.relay.getConsumption()
 
     def setOperationMode(self, opm):
-        print "OPERATION MODE : " + str(opm)
+        if DEBUG:
+            print "OPERATION MODE : " + str(opm)
         self.operationmode = opm
 
     def updateStatus(self):
@@ -94,10 +96,9 @@ class heatController():
     def nextStep(self):
         now = datetime.datetime.now()
         self.chkToday(now)
-        print "\nGetstatus : " + str(self.relay.getStatus())
-        print type(self.relay.getStatus())
+        if DEBUG:
+            print "\nGetstatus : " + str(self.relay.getStatus())
         if self.relay.getStatus():
-            print "DENTRO IF GET STATUS TRUE"
             self.relay.addTodayOn(now)
         else:
             self.relay.addTodayOff(now)
@@ -145,8 +146,9 @@ class heatController():
                 tSet = float(self.automode[useconf]['ht'][t])
         # rooms = 'assegno stanze'
         t, h = self.calculateTH()  # (rooms)
-        print "\nTSET : " + str(tSet)
-        print "\nT : " + str(t + self.kttollerance)
+        if DEBUG:
+            print "\nTSET : " + str(tSet)
+            print "\nT : " + str(t + self.kttollerance)
         if tSet <= t + self.kttollerance:
             return True
         else:
@@ -216,7 +218,8 @@ class relay():
         self.oldOff = deque('', 5)
 
     def getStatus(self):
-        print "\nSTATUS : " + str(self.status)
+        if DEBUG:
+            print "\nSTATUS : " + str(self.status)
         return bool(self.status)
 
     def getDtChkPoint(self):
@@ -227,12 +230,14 @@ class relay():
 
     def setStatus(self, status):
         self.status = bool(status)
-        print "\n SetStatus : " + str(status)
+        if DEBUG:
+            print "\n SetStatus : " + str(status)
 
     def addTodayOn(self, now):
-        print "\nNow : " + str(now)
-        print "\nCHKPOINT : " + str(self.dtChkPoint)
-        print "\nAdd today : " + str((now - self.dtChkPoint).total_seconds())
+        if DEBUG:
+            print "\nNow : " + str(now)
+            print "\nCHKPOINT : " + str(self.dtChkPoint)
+            print "\nAdd today : " + str((now - self.dtChkPoint).total_seconds())
         self.todayOn += (now - self.dtChkPoint).total_seconds()
 
     def addTodayOff(self, now):
