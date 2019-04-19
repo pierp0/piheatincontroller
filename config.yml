@@ -14,11 +14,17 @@ rooms:
   mac3 : 'living_room'
   mac4 : 'kitchen'
 
+
 mode:
   kt  :
-    temperature :  18
+    temperature : 18
     tollerance  : 1
-  auto:  
+  auto:
+    tollerance  : 1
+    lowdefault  : 12
+    whoisathome: 
+      - 127.0.0.1
+      - 192.168.1.1  
     default :
       ht  :
         "7:00"    :   18
