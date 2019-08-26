@@ -1,4 +1,5 @@
 from collections import deque
+import os
 import datetime
 
 DEBUG = False
@@ -11,8 +12,8 @@ class heatController():
         for r in roomslist:
             self.rooms[r] = room(roomslist[r], 3 * len(roomslist))
         self.relay = relay()
-        self.kttemperature = ktmode['temperature']
-        self.kttollerance = ktmode['tollerance']
+        # self.kttemperature = ktmode['temperature']
+        self.ktmode = ktmode
         self.automode = automode
         # 0 = alwaysOff 1 = alwaysOn, 2 = auto, 3 = keepTemp
         self.operationmode = 0
@@ -80,18 +81,17 @@ class heatController():
         # AlwaysOff
         else:
             self.relayNextStep = self.allwaysOff()
-        '''
-        if self.nextStep() and self.arUatHome():
-            self.relay.setNextStatus(True)
-        else:
-            self.relay.setNextStatus(False)
+        
     def arUatHome(self):
-        return True
-
-        hosts = ['', '']
+        # List of configured IPs. mobile, laptop or someone else. If one of those IP is up, u ar at home  
+        hosts = self.automode['whoisathome']
+        # This function return true if ping fail. if all ping fail noone is at home
         if all(os.system("ping -c 1 " + host) for host in hosts):
+            # All IPs ar down
             return False
-        '''
+        else:
+            # There is one or more IPs up
+            return True
 
     def nextStep(self):
         now = datetime.datetime.now()
@@ -116,46 +116,69 @@ class heatController():
         return True
 
     def auto(self):
-        weekday = {
-            0: 'monday',
-            1: 'tuesday',
-            2: 'wednesday',
-            3: 'thursday',
-            4: 'friday',
-            5: 'saturday',
-            6: 'sunday'
-        }
-        now = datetime.datetime.now()
-        # looking for today
-        day = weekday[now.weekday()]
-        useconf = ''
-        # rooms = {}
-        tSet = ''
-        # if today is active I'll use today, otherwise default
         try:
-            if self.automode[day]["active"]:
-                useconf = day
+            # If noone is at home auto mode shift to lowdefault temperature
+            if self.arUatHome(): 
+                weekday = {
+                    0: 'monday',
+                    1: 'tuesday',
+                    2: 'wednesday',
+                    3: 'thursday',
+                    4: 'friday',
+                    5: 'saturday',
+                    6: 'sunday'
+                }
+                now = datetime.datetime.now()
+                # looking for today
+                day = weekday[now.weekday()]
+                useconf = ''
+                # rooms = {}
+                # if today is active I'll use today, otherwise default
+                try:
+                    if self.automode[day]["active"]:
+                        useconf = day
+                    else:
+                        useconf = 'default'
+                except Exception as e:
+                    raise e
+                # mindelta value is from 0 to 24h in ms. it's used to determinate the correct interval in conf file
+                mindelta = 86400000
+                # I select the temperature to maintain now
+                # Store actual hous and minutes in actualtime
+                actualtime = datetime.datetime.strptime(str(now.hour) + ":" + str(now.minute), "%H:%M")
+                # The for cicle have not ordered elements thus we need to find the max configurated hour that is minus then actualhour 
+                for t in self.automode[useconf]['ht']:
+                    # Store configured hour and minute in configuredtime
+                    configuredtime = datetime.datetime.strptime(str(t), "%H:%M")
+                    # Envalue only configuredtime minus then actualtime
+                    if  configuredtime < actualtime:
+                        # Delta in milliseconds
+                        delta = (actualtime - configuredtime).total_seconds()
+                        # If this delta is better then mindelta I've found a new tSet
+                        if delta < mindelta:
+                            mindelta = delta
+                            tSet = float(self.automode[useconf]['ht'][t])
+                            if DEBUG:
+                                print tSet 
+                # rooms = 'assegno stanze'
             else:
-                useconf = 'default'
+                tSet = float(self.automode['lowdefault'])
+                if DEBUG:
+                    print '\n\nLOWDEFAULT'
+            t, h = self.calculateTH()  # (rooms)
+            if DEBUG:
+                print "\nTSET : " + str(tSet)
+            if float(t) <= tSet + float(self.automode['tollerance']):
+                return True
+            else:
+                return False
+        
         except Exception as e:
-            raise e
-        # I select the temperature to maintain now
-        for t in self.automode[useconf]['ht']:
-            # se ora attuale < orario allora assegno temp
-            if datetime.datetime.strptime(str(t), "%H:%M") > datetime.datetime.strptime(str(now.hour) + ":" + str(now.minute), "%H:%M"):
-                tSet = float(self.automode[useconf]['ht'][t])
-        # rooms = 'assegno stanze'
-        t, h = self.calculateTH()  # (rooms)
-        if DEBUG:
-            print "\nTSET : " + str(tSet)
-            print "\nT : " + str(t + self.kttollerance)
-        if tSet <= t + self.kttollerance:
-            return True
-        else:
-            return False
+           raise e
+        
 
     def keepTemp(self):
-        if self.getT() <= (float(self.kt) + self.kttollerance):
+        if self.getT() <= (float(self.ktmode[temperature]) + float(self.ktmode[tollerance])):
             return True
         else:
             return False

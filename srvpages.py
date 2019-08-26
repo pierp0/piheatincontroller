@@ -16,14 +16,14 @@ class pages():
 
     def showIndex(self):
         try:
-            with open('./WWW/index.html', 'r') as index:
+            with open('./www/index.html', 'r') as index:
                 return index.read()
         except Exception as e:
             raise e
 
     def getCss(self):
         try:
-            with open("./WWW/css/style.css") as f:
+            with open("./www/css/style.css") as f:
                 return f.read()
         except Exception as e:
             raise e
