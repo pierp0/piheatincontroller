@@ -4,24 +4,31 @@
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+
 function updateTemp(){
     $.ajax({url: "getTemp", success: function(response){
       $("#temperature").html(response);
     }});
 }
+
 function updateHumidity(){
     $.ajax({url: "getHum", success: function(response){
       $("#humidity").html(response);
     }});
 }
+
 function updateConsume(){
     $.ajax({url: "getConsumption", success: function(response){
       $("#consume").html(response);
     }});
 }
-updateConsume();
-updateTemp(); // This will run on page load
-updateHumidity();
+
+$(document).ready(function(){
+    updateConsume();
+    updateTemp(); // This will run on page load
+    updateHumidity();
+});
+
 setInterval(function(){
     updateTemp() // this will run after every 5 seconds
     updateHumidity()
@@ -57,11 +64,12 @@ setInterval(function(){
       <li><a href="#" class="fontawesome-file-alt"></a></li>
       <li><a href="#" class="fontawesome-calendar"></a></li>
       <li class="last"><a href="#" class="fontawesome-cog"></a></li>
+      style=color:green
       -->
     </ul>
   </nav>
   <section>
-    <div class="temperature  fontawesome-fire">
+    <div class="temperature  fontawesome-fire" >
       <h2 id="temperature"></h2><h2><span class="degree-symbol">°</span>C</h2>
     </div>
     <ul>
