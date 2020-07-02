@@ -5,10 +5,10 @@ Un po più di un semplice termostato.
 Goal:
   Realizzare un dispositivo che aiuti a gestire in maniera intelligente il riscaldamento degli ambienti di casa.
   
-Hard:
+Hardware:
   - PI : Il core del progetto è un raspberry pi 3b+ dotato di display Kuman e case. Il raspberry si occuperà di gestire sensori e relay oltre che di proporre un interfaccia web di gestione
                 
-                ![alt text](https://github.com/pierp0/piheatincontroller/edit/master/IMG/770A5842-1612x1080.jpg)
+                ![test](https://github.com/pierp0/piheatincontroller/edit/master/IMG/770A5842-1612x1080.jpg)
     raspberry   : https://www.amazon.it/gp/product/B07BDR5PDW/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
     microsdcard : https://www.amazon.it/gp/product/B06XFSZGCC/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
     display     : https://www.amazon.it/gp/product/B01CNLYL1C/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
