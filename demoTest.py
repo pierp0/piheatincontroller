@@ -20,10 +20,10 @@ def runRelay(ip, port, status, sleep):
                          str(port) + "/getNextStatus").content
         print "\nS : " + str(s)
         if int(s == 'True'):
-            print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
+            print(str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
                 " -- Status from relay : Active"
         else:
-            print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
+            print(str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
                 " -- Status from relay : Unactive"
 
 
@@ -37,13 +37,13 @@ def runSensor(ip, port, mac, sleep):
         h = randint(40, 60)
         requests.post("http://" + str(ip) + ":" + str(port) +
                       "/postHT", data={"r": mac, "t": t, "h": h})
-        print (str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
+        print(str(time.strftime("\n%d/%m/%Y %H:%M:%S"))) + \
             " -- MAC:" + str(mac) + " Temp: " + str(t) + " Hum: " + str(h)
 
 
 def startDemo():
     with open('./config.yml', 'r') as confFile:
-        conf = yaml.load(confFile)
+        conf = yaml.safe_load(confFile)
     ip = conf['server']['ip']
     port = int(conf['server']['port'])
     server_address = (ip, port)

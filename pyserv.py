@@ -87,7 +87,7 @@ class pyserv(BaseHTTPRequestHandler):
 def startHttpSrv(config=None):
     # if __name__ == "__main__":
     with open('./config.yml', 'r') as confFile:
-        conf = yaml.load(confFile)
+        conf = yaml.safe_load(confFile)
     server_address = (conf['server']['ip'], int(conf['server']['port']))
     p = pages(config)
     handler = partial(pyserv, p)

@@ -9,7 +9,7 @@ class pages():
 
     def __init__(self, config=False):
         with open('./config.yml', 'r') as confFile:
-            conf = yaml.load(confFile)
+            conf = yaml.safe_load(confFile)
         self.HC = heatController(
             conf['rooms'], conf['mode']['kt'], conf['mode']['auto'])
         self.config = bool(config)
@@ -89,7 +89,7 @@ class pages():
         if self.config:
             label = raw_input('Plaese add label for sensor ' + macaddr + '\n')
             with open('./config.yml', 'r') as confFile:
-                conf = yaml.load(confFile)
+                conf = yaml.safe_load(confFile)
             conf['rooms'][macaddr] = label
             with open('./config.yml', 'w') as confFile:
                 yaml.dump(conf, confFile, default_flow_style=False)
