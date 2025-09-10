@@ -1,4 +1,4 @@
-# piheatincontroller
+# piheatingcontroller
 
 Un po più di un semplice termostato.
 
